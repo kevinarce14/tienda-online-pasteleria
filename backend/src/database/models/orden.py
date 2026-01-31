@@ -1,37 +1,14 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Text,
-    Date,
-    DateTime,
-    DECIMAL,
-    ForeignKey
-)
+from sqlalchemy import Column, Integer, String, Numeric, DateTime
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
-
-from database.db import Base
-
+from backend.src.database.db import Base
 
 class Orden(Base):
     __tablename__ = "ordenes"
 
     id = Column(Integer, primary_key=True, index=True)
-    cliente_id = Column(Integer, ForeignKey("clientes.id", ondelete="SET NULL"))
+    nombre_cliente = Column(String(150))
+    email_cliente = Column(String(150))
+    total = Column(Numeric(10, 2), nullable=False)
+    estado = Column(String(30), default="pendiente")
+    fecha_creacion = Column(DateTime, server_default=func.now())
 
-    numero_orden = Column(String(50), unique=True, nullable=False)
-    total = Column(DECIMAL(10, 2), nullable=False)
-    estado = Column(String(50), default="pendiente")
-    metodo_pago = Column(String(50))
-
-    notas_cliente = Column(Text)
-    notas_internas = Column(Text)
-
-    fecha_evento = Column(Date)
-    direccion_entrega = Column(Text)
-
-    fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
-    fecha_actualizacion = Column(DateTime(timezone=True), server_default=func.now())
-
-    cliente = relationship("Cliente", back_populates="ordenes")

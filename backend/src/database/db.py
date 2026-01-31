@@ -8,7 +8,7 @@ DATABASE_URL = URL.create(
     password="SqlKevin",
     host="localhost",
     database="db-tienda-online-pasteleria",
-    port=5432,
+    port=5432
 )
 
 engine = create_engine(DATABASE_URL)

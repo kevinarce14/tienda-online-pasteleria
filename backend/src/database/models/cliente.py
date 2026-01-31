@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
-from database.db import Base
+from backend.src.database.db import Base
 
 
 class Cliente(Base):
