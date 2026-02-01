@@ -17,7 +17,7 @@
                             200: '#ffdbd1',
                             300: '#ffb9a6',
                             400: '#ff8c69',
-                            500: '#ff7f50', // Main Salmon Orange
+                            500: '#ff7f50',
                             600: '#e67248',
                             700: '#cc6540',
                             800: '#b35938',
@@ -153,195 +153,106 @@
                     </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden shadow-lg h-96 group relative">
-                    <img src="https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=600" alt="Minimalist Modern Cake" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <img src="https://tiendasweetcakes.cl/cdn/shop/files/29da51a5-88bc-4fb6-abe6-f8f69c99cfc7.jpg?v=1717789669" alt="Floral Elegance" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition flex items-center justify-center">
-                        <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Modern Minimalist</span>
-                   </div>
+                        <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Floral Elegance</span>
+                    </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden shadow-lg h-96 group relative">
-                    <img src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?q=80&w=600" alt="Rustic Style Cake" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <img src="https://oasiscakes.cl/cdn/shop/files/PortadaManzana.jpg?v=1722627862" alt="Artisan Charm" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition flex items-center justify-center">
-                        <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Rustic Charm</span>
-                   </div>
+                        <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Artisan Charm</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Shop -->
+    <!-- Shop Section -->
     <section id="shop" class="section-padding bg-salmon-50">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center md:text-left mb-12">
-                <h2 class="font-serif text-4xl text-salmon-900 mb-2 font-bold">Shop Our Classics</h2>
-                <p class="text-gray-600">Standard designs available for direct purchase.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Cake 1 -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all border border-salmon-100">
-                    <img src="https://images.unsplash.com/photo-1535141123063-3bb61093135c?q=80&w=400" alt="White Elegance Cake" class="w-full h-48 object-cover rounded-2xl mb-4">
-                    <h3 class="font-bold text-xl text-gray-900 mb-1">White Elegance</h3>
-                    <p class="text-gray-500 text-sm mb-4 italic">French vanilla & fresh cream.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-salmon-600">$120.00</span>
-                        <button onclick="addToCart('White Elegance', 120, 'https://images.unsplash.com/photo-1535141123063-3bb61093135c?q=80&w=100')" class="bg-salmon-500 text-white p-3 rounded-xl hover:bg-salmon-600 transition active:scale-90">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <!-- Cake 2 -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all border border-salmon-100">
-                    <img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=400" alt="Golden Velvet Cake" class="w-full h-48 object-cover rounded-2xl mb-4">
-                    <h3 class="font-bold text-xl text-gray-900 mb-1">Golden Velvet</h3>
-                    <p class="text-gray-500 text-sm mb-4 italic">Red velvet with edible gold leaf.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-salmon-600">$145.00</span>
-                        <button onclick="addToCart('Golden Velvet', 145, 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?q=80&w=100')" class="bg-salmon-500 text-white p-3 rounded-xl hover:bg-salmon-600 transition active:scale-90">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <!-- Cake 3 -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all border border-salmon-100">
-                    <img src="https://images.unsplash.com/photo-1519340333755-56e9c1d04579?q=80&w=400" alt="Royal Berry Cake" class="w-full h-48 object-cover rounded-2xl mb-4">
-                    <h3 class="font-bold text-xl text-gray-900 mb-1">Royal Berry</h3>
-                    <p class="text-gray-500 text-sm mb-4 italic">Pistachio & wild berries mix.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-salmon-600">$130.00</span>
-                        <button onclick="addToCart('Royal Berry', 130, 'https://images.unsplash.com/photo-1519340333755-56e9c1d04579?q=80&w=100')" class="bg-salmon-500 text-white p-3 rounded-xl hover:bg-salmon-600 transition active:scale-90">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-                </div>
-                <!-- Cake 4 -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all border border-salmon-100">
-                    <img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?q=80&w=400" alt="Dark Truffle Cake" class="w-full h-48 object-cover rounded-2xl mb-4">
-                    <h3 class="font-bold text-xl text-gray-900 mb-1">Dark Truffle</h3>
-                    <p class="text-gray-500 text-sm mb-4 italic">70% Dark chocolate & truffle.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-salmon-600">$155.00</span>
-                        <button onclick="addToCart('Dark Truffle', 155, 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?q=80&w=100')" class="bg-salmon-500 text-white p-3 rounded-xl hover:bg-salmon-600 transition active:scale-90">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-                </div>
+        <div class="max-w-7xl mx-auto text-center mb-12">
+            <h2 class="font-serif text-4xl text-salmon-900 mb-4 font-bold">Our Signature Collection</h2>
+            <div class="w-20 h-1 bg-gold mx-auto mb-4"></div>
+            <p class="text-gray-600 max-w-xl mx-auto">Each cake is a masterpiece. Choose yours or request a personalized design.</p>
+        </div>
+        
+        <div id="productos-container" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Los productos se cargarán dinámicamente desde la API -->
+            <div class="text-center py-20 col-span-3">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-salmon-500"></div>
+                <p class="mt-4 text-gray-500">Cargando productos...</p>
             </div>
         </div>
     </section>
 
     <!-- Custom Order Form -->
     <section id="custom" class="section-padding bg-white">
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-salmon-50 rounded-[2.5rem] p-8 md:p-14 border-2 border-salmon-100 shadow-2xl">
-                <div class="text-center mb-10">
-                    <h2 class="font-serif text-4xl text-salmon-900 mb-3 font-bold">Custom Order Inquiry</h2>
-                    <p class="text-gray-600 max-w-md mx-auto">Tell us about your dream cake and we'll bring it to life.</p>
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-serif text-4xl text-center text-gray-900 mb-4 font-bold">Request Your Custom Cake</h2>
+            <div class="w-20 h-1 bg-gold mx-auto mb-8"></div>
+            <p class="text-center text-gray-600 mb-12">Tell us your vision and we'll create your dream cake.</p>
+            
+            <form id="custom-form" onsubmit="handleCustomForm(event)" class="bg-salmon-50 p-10 rounded-3xl shadow-xl border border-salmon-100 space-y-6">
+                <div>
+                    <label class="block text-salmon-900 font-bold mb-2">Your Name</label>
+                    <input type="text" name="nombre" required class="w-full p-4 rounded-xl bg-white" placeholder="Jane Doe">
                 </div>
-                
-                <form onsubmit="handleForm(event)" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">Full Name</label>
-                            <input type="text" required placeholder="John Doe" class="w-full p-4 rounded-xl bg-white text-gray-900 shadow-sm font-semibold border-2">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">Email Address</label>
-                            <input type="email" required placeholder="hello@example.com" class="w-full p-4 rounded-xl bg-white text-gray-900 shadow-sm font-semibold border-2">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">Event Date</label>
-                            <input type="date" required class="w-full p-4 rounded-xl bg-white text-gray-900 shadow-sm font-semibold border-2">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">Expected Guests</label>
-                            <select class="w-full p-4 rounded-xl bg-white text-gray-900 shadow-sm font-semibold border-2">
-                                <option>Less than 50</option>
-                                <option>50 - 100</option>
-                                <option>100 - 200</option>
-                                <option>More than 200</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">Design & Flavor Details</label>
-                        <textarea rows="4" placeholder="Theme, colors, specific tiers or favorite flavors..." class="w-full p-4 rounded-xl bg-white text-gray-900 shadow-sm font-semibold border-2"></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-salmon-500 text-white py-5 rounded-2xl font-bold text-lg hover:bg-salmon-600 transition shadow-lg transform active:scale-95">
-                        Send Consultation Request
-                    </button>
-                </form>
-            </div>
+                <div>
+                    <label class="block text-salmon-900 font-bold mb-2">Email Address</label>
+                    <input type="email" name="email" required class="w-full p-4 rounded-xl bg-white" placeholder="jane@example.com">
+                </div>
+                <div>
+                    <label class="block text-salmon-900 font-bold mb-2">Event Date</label>
+                    <input type="date" name="fecha_evento" required class="w-full p-4 rounded-xl bg-white">
+                </div>
+                <div>
+                    <label class="block text-salmon-900 font-bold mb-2">Number of Guests</label>
+                    <input type="number" name="invitados" class="w-full p-4 rounded-xl bg-white" placeholder="e.g. 100">
+                </div>
+                <div>
+                    <label class="block text-salmon-900 font-bold mb-2">Describe Your Vision</label>
+                    <textarea name="detalles" rows="5" class="w-full p-4 rounded-xl bg-white" placeholder="Tell us about colors, flavors, design preferences..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-salmon-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-salmon-600 transition shadow-lg active:scale-95">
+                    Submit Request
+                </button>
+            </form>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-salmon-900 text-white pt-24 pb-12">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-16 border-b border-salmon-800 pb-20">
-            <div>
-                <img src="https://media.discordapp.net/attachments/1181255060659912804/1464354518081736856/ChatGPT_Image_Jan_23_2026_05_20_53_PM_1.png?ex=697529eb&is=6973d86b&hm=4edb72de5a4151ba4427a16859a428c5c24ed60844a08cec845bd560edd90371&=&format=webp&quality=lossless" 
-                     alt="Nadines Logo" class="h-20 w-auto mb-6 brightness-0 invert">
-                <p class="text-salmon-100 opacity-80 leading-relaxed">Crafting edible masterpieces to celebrate love in all its forms. Each cake is a story waiting to be told.</p>
-            </div>
-            <div>
-                <h4 class="font-bold text-xl mb-6 text-gold uppercase tracking-widest font-serif">Direct Contact</h4>
-                <ul class="space-y-4 text-salmon-100 font-medium">
-                    <li class="flex items-center space-x-4">
-                        <span>📍</span>
-                        <span>4553 E. Broadway Blvd Tucson, AZ 85711</span>
-                    </li>
-                    <li class="flex items-center space-x-4">
-                        <span>📞</span>
-                        <span>520-326-0735</span>
-                    </li>
-                    <li class="flex items-center space-x-4">
-                        <span>📧</span>
-                        <span>hello@nadinescakes.com</span>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold text-xl mb-6 text-gold uppercase tracking-widest font-serif">Studio Hours</h4>
-                <div class="text-salmon-100 space-y-2 font-medium">
-                    <p class="flex justify-between border-b border-salmon-800/50 pb-1">
-                        <span>Mon - Fri:</span>
-                        <span>7a - 6p</span>
-                    </p>
-                    <p class="flex justify-between border-b border-salmon-800/50 pb-1">
-                        <span>Saturday:</span>
-                        <span>7a - 5p</span>
-                    </p>
-                    <p class="flex justify-between opacity-50 italic">
-                        <span>Sunday:</span>
-                        <span>Closed</span>
-                    </p>
-                </div>
-                <div class="mt-8 flex space-x-5">
-                    <div class="w-10 h-10 bg-salmon-800 rounded-full flex items-center justify-center hover:bg-salmon-600 transition cursor-pointer font-bold text-xs">IG</div>
-                    <div class="w-10 h-10 bg-salmon-800 rounded-full flex items-center justify-center hover:bg-salmon-600 transition cursor-pointer font-bold text-xs">FB</div>
-                    <div class="w-10 h-10 bg-salmon-800 rounded-full flex items-center justify-center hover:bg-salmon-600 transition cursor-pointer font-bold text-xs">WA</div>
-                </div>
-            </div>
+    <footer class="bg-salmon-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <img src="https://media.discordapp.net/attachments/1181255060659912804/1464354518081736856/ChatGPT_Image_Jan_23_2026_05_20_53_PM_1.png?ex=697529eb&is=6973d86b&hm=4edb72de5a4151ba4427a16859a428c5c24ed60844a08cec845bd560edd90371&=&format=webp&quality=lossless" 
+                 alt="Nadines Logo" class="h-16 mx-auto mb-4 opacity-90">
+            <p class="text-salmon-200 mb-2">© 2026 Nadines Cakes. All rights reserved.</p>
+            <p class="text-salmon-300 text-sm">Handcrafted with love in every detail 🎂</p>
         </div>
-        <p class="text-center mt-12 text-salmon-600 text-xs font-bold uppercase tracking-[0.3em]">
-            &copy; 2024 Nadines - Premium Wedding Cakes & Sweets
-        </p>
     </footer>
 
-    <!-- Success Modal -->
-    <div id="modal" class="fixed inset-0 bg-black/80 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-[2rem] p-10 max-sm w-full text-center shadow-2xl scale-95 transition-all">
-            <div id="modal-icon" class="text-6xl mb-4">🍰</div>
-            <h4 id="modal-title" class="font-serif text-3xl mb-3 text-gray-900 font-bold">Great!</h4>
-            <p id="modal-text" class="text-gray-600 mb-8 leading-relaxed font-medium">Your request has been successfully sent.</p>
-            <button onclick="closeModal()" class="w-full bg-salmon-500 text-white py-4 rounded-xl font-bold shadow-md hover:bg-salmon-600 transition">Understood</button>
+    <!-- Modal for notifications -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-150">
+            <div class="text-center">
+                <div class="text-6xl mb-4" id="modal-icon">✨</div>
+                <h3 class="font-serif text-2xl font-bold text-salmon-900 mb-3" id="modal-title">Success!</h3>
+                <p class="text-gray-600 mb-6" id="modal-text">Your request has been sent.</p>
+                <button onclick="closeModal()" class="bg-salmon-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-salmon-600 transition">Close</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // ========================================
+        // CONFIGURACIÓN DE LA API
+        // ========================================
+        const API_URL = "http://127.0.0.1:8000";
+        
         let cartItems = [];
 
+        // ========================================
+        // FUNCIONES DE NAVEGACIÓN
+        // ========================================
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
@@ -352,12 +263,72 @@
             cart.classList.toggle('translate-x-full');
         }
 
-        function addToCart(name, price, image) {
+        // ========================================
+        // CARGAR PRODUCTOS DESDE LA API
+        // ========================================
+        async function cargarProductos() {
+            try {
+                const response = await fetch(`${API_URL}/productos`);
+                if (!response.ok) throw new Error('Error al cargar productos');
+                
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('productos-container').innerHTML = `
+                    <div class="col-span-3 text-center py-20">
+                        <p class="text-red-500 font-bold">Error al cargar productos</p>
+                        <p class="text-gray-500 mt-2">Asegúrate de que la API esté corriendo en ${API_URL}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const container = document.getElementById('productos-container');
+            
+            if (productos.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 text-center py-20">
+                        <p class="text-gray-500">No hay productos disponibles</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = productos.map(producto => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
+                    <div class="h-64 overflow-hidden">
+                        <img src="${producto.imagen_url || 'https://via.placeholder.com/400x300?text=Cake'}" 
+                             alt="${producto.nombre}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-serif text-2xl text-salmon-900 font-bold mb-2">${producto.nombre}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${producto.descripcion || 'Delicioso pastel artesanal'}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl font-bold text-salmon-600">$${parseFloat(producto.precio).toFixed(2)}</span>
+                            <button onclick="addToCart(${producto.id}, '${producto.nombre}', ${producto.precio}, '${producto.imagen_url || ''}')" 
+                                    class="bg-salmon-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-salmon-600 transition shadow-md active:scale-95">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========================================
+        // FUNCIONES DEL CARRITO
+        // ========================================
+        function addToCart(producto_id, nombre, precio, imagen) {
             cartItems.push({ 
-                id: Date.now(), 
-                name: name, 
-                price: price,
-                image: image 
+                id: Date.now(),
+                producto_id: producto_id,
+                nombre: nombre, 
+                precio: parseFloat(precio),
+                cantidad: 1,
+                imagen: imagen || 'https://via.placeholder.com/100'
             });
             updateCartUI();
             toggleCart();
@@ -393,15 +364,15 @@
             let total = 0;
 
             cartItems.forEach(item => {
-                total += item.price;
+                total += item.precio * item.cantidad;
                 const itemDiv = document.createElement('div');
                 itemDiv.className = "flex items-center justify-between bg-salmon-50 p-4 rounded-2xl border border-salmon-100 shadow-sm";
                 itemDiv.innerHTML = `
                     <div class="flex items-center space-x-4">
-                        <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg">
+                        <img src="${item.imagen}" class="w-12 h-12 object-cover rounded-lg">
                         <div>
-                            <p class="font-bold text-salmon-900 text-sm">${item.name}</p>
-                            <p class="text-salmon-600 font-semibold">$${item.price.toFixed(2)}</p>
+                            <p class="font-bold text-salmon-900 text-sm">${item.nombre}</p>
+                            <p class="text-salmon-600 font-semibold">$${item.precio.toFixed(2)}</p>
                         </div>
                     </div>
                     <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 p-1">
@@ -416,19 +387,101 @@
             totalPriceEl.innerText = `$${total.toFixed(2)}`;
         }
 
-        function checkout() {
-            showModal('Order Placed!', 'Thank you for choosing Nadines. We will contact you soon to finalize payment and delivery details.', '🎀');
-            cartItems = [];
-            updateCartUI();
-            toggleCart();
+        // ========================================
+        // CHECKOUT - ENVIAR ORDEN A LA API
+        // ========================================
+        async function checkout() {
+            if (cartItems.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+
+            // Pedir datos del cliente
+            const nombre = prompt('Ingresa tu nombre:');
+            const email = prompt('Ingresa tu email:');
+            
+            if (!nombre || !email) {
+                alert('Nombre y email son requeridos');
+                return;
+            }
+
+            try {
+                // 1. Calcular el total
+                const total = cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+                // 2. Crear la orden
+                const ordenResponse = await fetch(`${API_URL}/ordenes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre_cliente: nombre,
+                        email_cliente: email,
+                        total: total
+                    })
+                });
+
+                if (!ordenResponse.ok) throw new Error('Error al crear la orden');
+                
+                const orden = await ordenResponse.json();
+
+                // 3. Agregar los items a la orden
+                for (const item of cartItems) {
+                    const itemResponse = await fetch(`${API_URL}/ordenes/${orden.id}/items`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            producto_id: item.producto_id,
+                            nombre_producto: item.nombre,
+                            precio_unitario: item.precio,
+                            cantidad: item.cantidad
+                        })
+                    });
+
+                    if (!itemResponse.ok) throw new Error('Error al agregar item');
+                }
+
+                // 4. Limpiar carrito y mostrar confirmación
+                showModal(
+                    'Order Placed! 🎉', 
+                    `Thank you ${nombre}! Your order #${orden.id} has been confirmed. We'll contact you at ${email} soon.`, 
+                    '🎂'
+                );
+                
+                cartItems = [];
+                updateCartUI();
+                toggleCart();
+
+            } catch (error) {
+                console.error('Error en checkout:', error);
+                alert('Hubo un error al procesar tu orden. Por favor intenta nuevamente.');
+            }
         }
 
-        function handleForm(e) {
+        // ========================================
+        // FORMULARIO PERSONALIZADO
+        // ========================================
+        async function handleCustomForm(e) {
             e.preventDefault();
-            showModal('Sent!', 'Nadines will contact you via email shortly with your custom quote.', '✨');
+            
+            const formData = new FormData(e.target);
+            const data = {
+                nombre: formData.get('nombre'),
+                email: formData.get('email'),
+                fecha_evento: formData.get('fecha_evento'),
+                invitados: formData.get('invitados'),
+                detalles: formData.get('detalles')
+            };
+
+            // Aquí puedes enviar a tu API si tienes un endpoint para consultas personalizadas
+            console.log('Consulta personalizada:', data);
+            
+            showModal('Sent! ✨', 'Nadines will contact you via email shortly with your custom quote.', '💌');
             e.target.reset();
         }
 
+        // ========================================
+        // MODAL
+        // ========================================
         function showModal(title, text, icon) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-text').innerText = text;
@@ -445,6 +498,14 @@
                 document.getElementById('modal').classList.add('hidden');
             }, 150);
         }
+
+        // ========================================
+        // INICIALIZAR AL CARGAR LA PÁGINA
+        // ========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarProductos();
+        });
     </script>
+
 </body>
 </html>

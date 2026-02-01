@@ -26,6 +26,7 @@ CREATE TABLE ordenes (
     email_cliente VARCHAR(150),
     total NUMERIC(10,2) NOT NULL CHECK (total >= 0),
     estado VARCHAR(30) DEFAULT 'pendiente',
+    codigo_orden VARCHAR(30) NOT NULL UNIQUE,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX idx_ordenes_estado ON ordenes(estado);
