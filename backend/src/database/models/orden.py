@@ -10,5 +10,6 @@ class Orden(Base):
     email_cliente = Column(String(150))
     total = Column(Numeric(10, 2), nullable=False)
     estado = Column(String(30), default="pendiente")
+    codigo_orden = Column(String(30), unique=True, nullable=False)
     fecha_creacion = Column(DateTime, server_default=func.now())
 

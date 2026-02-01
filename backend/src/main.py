@@ -4,6 +4,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from pathlib import Path
+from datetime import datetime
 
 from backend.src.database.db import get_db
 from backend.src.database.models.producto import Producto
@@ -96,14 +97,25 @@ def crear_orden(
     nueva = Orden(
         nombre_cliente=orden.nombre_cliente,
         email_cliente=orden.email_cliente,
-        total=orden.total,
-        estado="pendiente"
+        total=0,  # ✅ Iniciar en 0, se actualizará al agregar items
+        estado="pendiente",
+        codigo_orden="TEMP"  # placeholder
     )
 
     db.add(nueva)
     db.commit()
     db.refresh(nueva)
+
+    # generar código real
+    nueva.codigo_orden = generar_codigo_orden(nueva.id)
+    db.commit()
+    db.refresh(nueva)
+
     return nueva
+
+def generar_codigo_orden(id_orden: int) -> str:
+    anio = datetime.now().year
+    return f"ORD-{anio}-{str(id_orden).zfill(6)}"
 
 
 # =========================
@@ -134,7 +146,7 @@ def agregar_item_a_orden(
         subtotal=subtotal
     )
 
-    orden.total += subtotal  # 🔥 importante
+    orden.total += subtotal  # 🔥 Se suma correctamente aquí
 
     db.add(nuevo_item)
     db.commit()

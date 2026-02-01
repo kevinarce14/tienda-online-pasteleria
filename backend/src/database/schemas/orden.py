@@ -6,8 +6,12 @@ class OrdenCreate(BaseModel):
     email_cliente: EmailStr
     total: Decimal
 
-class OrdenResponse(OrdenCreate):
+class OrdenResponse(BaseModel):
     id: int
+    codigo_orden: str
+    nombre_cliente: str | None
+    email_cliente: str | None
+    total: Decimal
     estado: str
 
     class Config:

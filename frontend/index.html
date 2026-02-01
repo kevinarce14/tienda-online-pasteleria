@@ -230,6 +230,15 @@
         </div>
     </footer>
 
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-150">
+            <div id="checkout-form-container">
+                <!-- El formulario se carga dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for notifications -->
     <div id="modal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-150">
@@ -322,14 +331,24 @@
         // FUNCIONES DEL CARRITO
         // ========================================
         function addToCart(producto_id, nombre, precio, imagen) {
-            cartItems.push({ 
-                id: Date.now(),
-                producto_id: producto_id,
-                nombre: nombre, 
-                precio: parseFloat(precio),
-                cantidad: 1,
-                imagen: imagen || 'https://via.placeholder.com/100'
-            });
+            // Buscar si el producto ya está en el carrito
+            const existingItem = cartItems.find(item => item.producto_id === producto_id);
+            
+            if (existingItem) {
+                // Si ya existe, aumentar la cantidad
+                existingItem.cantidad += 1;
+            } else {
+                // Si no existe, agregarlo como nuevo
+                cartItems.push({ 
+                    id: Date.now(),
+                    producto_id: producto_id,
+                    nombre: nombre, 
+                    precio: parseFloat(precio),
+                    cantidad: 1,
+                    imagen: imagen || 'https://via.placeholder.com/100'
+                });
+            }
+            
             updateCartUI();
             toggleCart();
         }
@@ -337,6 +356,18 @@
         function removeFromCart(id) {
             cartItems = cartItems.filter(item => item.id !== id);
             updateCartUI();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cartItems.find(item => item.id === id);
+            if (item) {
+                item.cantidad += change;
+                if (item.cantidad <= 0) {
+                    removeFromCart(id);
+                } else {
+                    updateCartUI();
+                }
+            }
         }
 
         function updateCartUI() {
@@ -349,7 +380,9 @@
             const checkoutBtn = document.getElementById('checkout-btn');
 
             badges.forEach(badge => {
-                badge.innerText = cartItems.length;
+                // Mostrar la cantidad total de items (sumando las cantidades)
+                const totalItems = cartItems.reduce((sum, item) => sum + item.cantidad, 0);
+                badge.innerText = totalItems;
             });
 
             if (cartItems.length === 0) {
@@ -366,20 +399,34 @@
             cartItems.forEach(item => {
                 total += item.precio * item.cantidad;
                 const itemDiv = document.createElement('div');
-                itemDiv.className = "flex items-center justify-between bg-salmon-50 p-4 rounded-2xl border border-salmon-100 shadow-sm";
+                itemDiv.className = "bg-salmon-50 p-4 rounded-2xl border border-salmon-100 shadow-sm";
                 itemDiv.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <img src="${item.imagen}" class="w-12 h-12 object-cover rounded-lg">
-                        <div>
-                            <p class="font-bold text-salmon-900 text-sm">${item.nombre}</p>
-                            <p class="text-salmon-600 font-semibold">$${item.precio.toFixed(2)}</p>
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.imagen}" class="w-14 h-14 object-cover rounded-lg">
+                            <div>
+                                <p class="font-bold text-salmon-900 text-sm">${item.nombre}</p>
+                                <p class="text-salmon-600 font-semibold text-xs">$${item.precio.toFixed(2)} c/u</p>
+                            </div>
                         </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 p-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
                     </div>
-                    <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2 bg-white rounded-lg px-2 py-1 border border-salmon-200">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="text-salmon-600 hover:text-salmon-700 font-bold w-6 h-6 flex items-center justify-center">
+                                -
+                            </button>
+                            <span class="text-sm font-bold text-gray-700 w-8 text-center">${item.cantidad}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="text-salmon-600 hover:text-salmon-700 font-bold w-6 h-6 flex items-center justify-center">
+                                +
+                            </button>
+                        </div>
+                        <span class="text-salmon-600 font-bold">$${(item.precio * item.cantidad).toFixed(2)}</span>
+                    </div>
                 `;
                 container.appendChild(itemDiv);
             });
@@ -388,7 +435,7 @@
         }
 
         // ========================================
-        // CHECKOUT - ENVIAR ORDEN A LA API
+        // CHECKOUT - ENVIAR ORDEN A LA API Y REDIRIGIR A WHATSAPP
         // ========================================
         async function checkout() {
             if (cartItems.length === 0) {
@@ -396,27 +443,103 @@
                 return;
             }
 
-            // Pedir datos del cliente
-            const nombre = prompt('Ingresa tu nombre:');
-            const email = prompt('Ingresa tu email:');
+            // Mostrar formulario de checkout personalizado
+            showCheckoutForm();
+        }
+
+        function showCheckoutForm() {
+            const total = cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            
+            const formHTML = `
+                <div class="space-y-4">
+                    <h3 class="font-serif text-2xl font-bold text-salmon-900 mb-4">Finalizar Pedido</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre Completo *</label>
+                        <input type="text" id="checkout-nombre" required 
+                               class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-salmon-500 focus:outline-none"
+                               placeholder="Ej: María González">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="checkout-email" required 
+                               class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-salmon-500 focus:outline-none"
+                               placeholder="Ej: maria@email.com">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Teléfono (opcional)</label>
+                        <input type="tel" id="checkout-telefono" 
+                               class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-salmon-500 focus:outline-none"
+                               placeholder="Ej: +54 9 11 1234-5678">
+                        <p class="text-xs text-gray-500 mt-1">Si lo proporcionas, usaremos este número para WhatsApp</p>
+                    </div>
+                    
+                    <div class="bg-salmon-50 p-4 rounded-lg border border-salmon-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-600 font-semibold">Total a pagar:</span>
+                            <span class="text-2xl font-bold text-salmon-600">$${total.toFixed(2)}</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Serás redirigido a WhatsApp para completar el pago</p>
+                    </div>
+                    
+                    <div class="flex space-x-3 mt-6">
+                        <button onclick="procesarCheckout()" 
+                                class="flex-1 bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            <span>Pagar con WhatsApp</span>
+                        </button>
+                        <button onclick="closeCheckoutForm()" 
+                                class="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-300 transition">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('checkout-form-container').innerHTML = formHTML;
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('checkout-modal').querySelector('.bg-white').classList.replace('scale-95', 'scale-100');
+            }, 10);
+        }
+
+        function closeCheckoutForm() {
+            document.getElementById('checkout-modal').querySelector('.bg-white').classList.replace('scale-100', 'scale-95');
+            setTimeout(() => {
+                document.getElementById('checkout-modal').classList.add('hidden');
+            }, 150);
+        }
+
+        async function procesarCheckout() {
+            const nombre = document.getElementById('checkout-nombre').value.trim();
+            const email = document.getElementById('checkout-email').value.trim();
+            const telefono = document.getElementById('checkout-telefono').value.trim();
             
             if (!nombre || !email) {
-                alert('Nombre y email son requeridos');
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+
+            // Validar email básico
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Por favor ingresa un email válido');
                 return;
             }
 
             try {
-                // 1. Calcular el total
-                const total = cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
-                // 2. Crear la orden
+                // 1. Crear la orden (el total se calculará automáticamente en el backend)
                 const ordenResponse = await fetch(`${API_URL}/ordenes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         nombre_cliente: nombre,
                         email_cliente: email,
-                        total: total
+                        total: 0  // Se actualizará automáticamente al agregar items
                     })
                 });
 
@@ -424,7 +547,7 @@
                 
                 const orden = await ordenResponse.json();
 
-                // 3. Agregar los items a la orden
+                // 2. Agregar los items a la orden
                 for (const item of cartItems) {
                     const itemResponse = await fetch(`${API_URL}/ordenes/${orden.id}/items`, {
                         method: 'POST',
@@ -440,20 +563,63 @@
                     if (!itemResponse.ok) throw new Error('Error al agregar item');
                 }
 
-                // 4. Limpiar carrito y mostrar confirmación
-                showModal(
-                    'Order Placed! 🎉', 
-                    `Thank you ${nombre}! Your order #${orden.id} has been confirmed. We'll contact you at ${email} soon.`, 
-                    '🎂'
-                );
+                // 3. Calcular el total para el mensaje de WhatsApp
+                const total = cartItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+                // 4. Crear mensaje de WhatsApp
+                const codigoOrden = orden.codigo_orden || `ORD-${orden.id}`;
+                let mensaje = `🎂 *Hola! Quiero completar mi pedido* 🎂\n\n`;
+                mensaje += `📋 *Código de Orden:* ${codigoOrden}\n`;
+                mensaje += `👤 *Nombre:* ${nombre}\n`;
+                mensaje += `📧 *Email:* ${email}\n\n`;
+                mensaje += `🛒 *Detalle del Pedido:*\n`;
+                mensaje += `━━━━━━━━━━━━━━━━\n`;
                 
-                cartItems = [];
-                updateCartUI();
-                toggleCart();
+                cartItems.forEach((item, index) => {
+                    mensaje += `${index + 1}. *${item.nombre}*\n`;
+                    mensaje += `   💰 $${item.precio.toFixed(2)} x ${item.cantidad} = $${(item.precio * item.cantidad).toFixed(2)}\n\n`;
+                });
+                
+                mensaje += `━━━━━━━━━━━━━━━━\n`;
+                mensaje += `💵 *TOTAL: $${total.toFixed(2)}*\n\n`;
+                mensaje += `¿Cómo procedo con el pago? 😊`;
+
+                // 5. Configurar número de WhatsApp de la tienda
+                const WHATSAPP_TIENDA = '5491130601712'; // ⚠️ CAMBIA ESTO POR TU NÚMERO
+                
+                // Si el usuario proporcionó teléfono, sugerirlo en el mensaje
+                if (telefono) {
+                    mensaje += `\n\n_Mi teléfono: ${telefono}_`;
+                }
+
+                // 6. Crear URL de WhatsApp
+                const mensajeEncoded = encodeURIComponent(mensaje);
+                const whatsappURL = `https://wa.me/${WHATSAPP_TIENDA}?text=${mensajeEncoded}`;
+
+                // 7. Cerrar modal de checkout
+                closeCheckoutForm();
+
+                // 8. Mostrar confirmación antes de redirigir
+                showModal(
+                    '¡Pedido Registrado! 🎉', 
+                    `Tu pedido ${codigoOrden} ha sido creado. Ahora serás redirigido a WhatsApp para completar el pago.`, 
+                    '✅'
+                );
+
+                // 9. Redirigir a WhatsApp después de 2 segundos
+                setTimeout(() => {
+                    window.open(whatsappURL, '_blank');
+                    
+                    // 10. Limpiar carrito
+                    cartItems = [];
+                    updateCartUI();
+                    toggleCart();
+                    closeModal();
+                }, 2000);
 
             } catch (error) {
                 console.error('Error en checkout:', error);
-                alert('Hubo un error al procesar tu orden. Por favor intenta nuevamente.');
+                alert('Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
             }
         }
 
