@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Date, DateTime
 from sqlalchemy.sql import func
-from database.db import Base
+from backend.src.database.db import Base
 
 class ConsultaCustom(Base):
     __tablename__ = "consultas_custom"

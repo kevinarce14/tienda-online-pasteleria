@@ -49,8 +49,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex-shrink-0 flex items-center">
-                    <img src="https://media.discordapp.net/attachments/1181255060659912804/1464354518081736856/ChatGPT_Image_Jan_23_2026_05_20_53_PM_1.png?ex=697529eb&is=6973d86b&hm=4edb72de5a4151ba4427a16859a428c5c24ed60844a08cec845bd560edd90371&=&format=webp&quality=lossless" 
-                         alt="Nadines Logo" class="h-16 w-auto">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-3xl">🎂</span>
+                        <span class="font-serif text-2xl font-bold text-salmon-600">Nadines</span>
+                    </div>
                 </div>
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#home" class="text-gray-900 font-semibold hover:text-salmon-500 transition">Home</a>
@@ -153,13 +155,13 @@
                     </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden shadow-lg h-96 group relative">
-                    <img src="https://tiendasweetcakes.cl/cdn/shop/files/29da51a5-88bc-4fb6-abe6-f8f69c99cfc7.jpg?v=1717789669" alt="Floral Elegance" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&h=1000&fit=crop" alt="Floral Elegance" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition flex items-center justify-center">
                         <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Floral Elegance</span>
                     </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden shadow-lg h-96 group relative">
-                    <img src="https://oasiscakes.cl/cdn/shop/files/PortadaManzana.jpg?v=1722627862" alt="Artisan Charm" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=1000&fit=crop" alt="Artisan Charm" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition flex items-center justify-center">
                         <span class="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Artisan Charm</span>
                     </div>
@@ -223,8 +225,10 @@
     <!-- Footer -->
     <footer class="bg-salmon-900 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <img src="https://media.discordapp.net/attachments/1181255060659912804/1464354518081736856/ChatGPT_Image_Jan_23_2026_05_20_53_PM_1.png?ex=697529eb&is=6973d86b&hm=4edb72de5a4151ba4427a16859a428c5c24ed60844a08cec845bd560edd90371&=&format=webp&quality=lossless" 
-                 alt="Nadines Logo" class="h-16 mx-auto mb-4 opacity-90">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <span class="text-4xl">🎂</span>
+                <span class="font-serif text-3xl font-bold text-white">Nadines</span>
+            </div>
             <p class="text-salmon-200 mb-2">© 2026 Nadines Cakes. All rights reserved.</p>
             <p class="text-salmon-300 text-sm">Handcrafted with love in every detail 🎂</p>
         </div>
@@ -585,7 +589,7 @@
                 mensaje += `¿Cómo procedo con el pago? 😊`;
 
                 // 5. Configurar número de WhatsApp de la tienda
-                const WHATSAPP_TIENDA = '5491130601712'; // ⚠️ CAMBIA ESTO POR TU NÚMERO
+                const WHATSAPP_TIENDA = '5491112345678'; // ⚠️ CAMBIA ESTO POR TU NÚMERO
                 
                 // Si el usuario proporcionó teléfono, sugerirlo en el mensaje
                 if (telefono) {
@@ -630,19 +634,120 @@
             e.preventDefault();
             
             const formData = new FormData(e.target);
-            const data = {
-                nombre: formData.get('nombre'),
-                email: formData.get('email'),
-                fecha_evento: formData.get('fecha_evento'),
-                invitados: formData.get('invitados'),
-                detalles: formData.get('detalles')
-            };
+            const nombre = formData.get('nombre').trim();
+            const email = formData.get('email').trim();
+            const fecha_evento = formData.get('fecha_evento');
+            const invitados = formData.get('invitados');
+            const detalles = formData.get('detalles').trim();
 
-            // Aquí puedes enviar a tu API si tienes un endpoint para consultas personalizadas
-            console.log('Consulta personalizada:', data);
+            // ========================================
+            // VALIDACIONES
+            // ========================================
             
-            showModal('Sent! ✨', 'Nadines will contact you via email shortly with your custom quote.', '💌');
-            e.target.reset();
+            // Validar nombre
+            if (nombre.length < 2) {
+                alert('❌ El nombre debe tener al menos 2 caracteres');
+                return;
+            }
+            
+            if (nombre.length > 100) {
+                alert('❌ El nombre no puede tener más de 100 caracteres');
+                return;
+            }
+
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('❌ Por favor ingresa un email válido');
+                return;
+            }
+
+            // Validar fecha del evento
+            const fechaEvento = new Date(fecha_evento);
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            
+            if (fechaEvento < hoy) {
+                alert('❌ La fecha del evento no puede ser en el pasado');
+                return;
+            }
+
+            // Validar que la fecha no sea más de 5 años en el futuro
+            const cincoAnios = new Date();
+            cincoAnios.setFullYear(cincoAnios.getFullYear() + 5);
+            
+            if (fechaEvento > cincoAnios) {
+                alert('❌ La fecha del evento no puede ser más de 5 años en el futuro');
+                return;
+            }
+
+            // Validar número de invitados (si se proporciona)
+            if (invitados) {
+                const numInvitados = parseInt(invitados);
+                if (isNaN(numInvitados) || numInvitados < 1) {
+                    alert('❌ El número de invitados debe ser al menos 1');
+                    return;
+                }
+                if (numInvitados > 10000) {
+                    alert('❌ El número de invitados no puede ser mayor a 10,000');
+                    return;
+                }
+            }
+
+            // Validar detalles (si se proporcionan)
+            if (detalles && detalles.length > 2000) {
+                alert('❌ Los detalles no pueden tener más de 2000 caracteres');
+                return;
+            }
+
+            // ========================================
+            // ENVIAR A LA API
+            // ========================================
+            
+            // Deshabilitar botón de submit
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const textoOriginal = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Enviando...';
+
+            try {
+                const response = await fetch(`${API_URL}/consultas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: nombre,
+                        email: email,
+                        fecha_evento: fecha_evento,
+                        invitados: invitados || null,
+                        detalles: detalles || null
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error al enviar la consulta');
+                }
+
+                const consulta = await response.json();
+
+                // Limpiar formulario
+                e.target.reset();
+
+                // Mostrar mensaje de éxito
+                showModal(
+                    '¡Consulta Enviada! ✨', 
+                    `Gracias ${nombre}! Hemos recibido tu solicitud para el ${new Date(fecha_evento).toLocaleDateString('es-ES')}. Te contactaremos pronto por email con tu cotización personalizada.`, 
+                    '💌'
+                );
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`❌ Error al enviar la consulta: ${error.message}\n\nPor favor intenta nuevamente o contáctanos directamente.`);
+            } finally {
+                // Rehabilitar botón
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = textoOriginal;
+            }
         }
 
         // ========================================
