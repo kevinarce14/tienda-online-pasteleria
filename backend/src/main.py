@@ -33,6 +33,7 @@ from backend.src.database.schemas.consulta_custom import (
 )
 from backend.src.utils.email import enviar_email_consulta
 
+
 app = FastAPI(title="API Tienda Online Pastelería 🎂")
 
 # -------------------------
