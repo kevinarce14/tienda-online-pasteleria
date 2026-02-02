@@ -1,3 +1,4 @@
+import os
 import smtplib
 from email.message import EmailMessage
 
@@ -9,25 +10,54 @@ def enviar_email_consulta(
     invitados: str | None,
     detalles: str
 ):
+    """
+    Envía un email con los detalles de la consulta personalizada
+    Usa variables de entorno para las credenciales
+    """
+    
+    # Obtener configuración de variables de entorno
+    EMAIL_SENDER = os.getenv("EMAIL_SENDER", "kevinfeo2002@gmail.com")
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "tnej orar wvya jcda")
+    EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER", "kevindamian1702@gmail.com")
+    SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
+    
     msg = EmailMessage()
-    msg["Subject"] = "Nueva consulta personalizada"
-    msg["From"] = "kevinfeo2002@gmail.com"
-    msg["To"] = "kevindamian1702@gmail.com"
+    msg["Subject"] = "🎂 Nueva consulta personalizada - Nadines Cakes"
+    msg["From"] = EMAIL_SENDER
+    msg["To"] = EMAIL_RECEIVER
 
     cuerpo = f"""
-    Nueva consulta personalizada recibida
+    ═══════════════════════════════════════
+    🎂 NUEVA CONSULTA PERSONALIZADA
+    ═══════════════════════════════════════
 
-    Nombre: {nombre}
-    Email: {email_cliente}
+    📋 DATOS DEL CLIENTE:
+    ───────────────────────────────────────
+    Nombre:           {nombre}
+    Email:            {email_cliente}
     Fecha del evento: {fecha_evento}
-    Invitados: {invitados or "No especificado"}
+    Invitados:        {invitados or "No especificado"}
 
-    Detalles:
-    {detalles}
+    💬 DETALLES:
+    ───────────────────────────────────────
+    {detalles or "No se proporcionaron detalles adicionales."}
+
+    ═══════════════════════════════════════
+    Este mensaje fue generado automáticamente
+    por el sistema de Nadines Cakes
+    ═══════════════════════════════════════
     """
 
     msg.set_content(cuerpo)
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login("kevinfeo2002@gmail.com", "tnej orar wvya jcda")
-        smtp.send_message(msg)
+    try:
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as smtp:
+            smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
+            smtp.send_message(msg)
+        print(f"✅ Email enviado exitosamente a {EMAIL_RECEIVER}")
+        return True
+    except Exception as e:
+        print(f"❌ Error al enviar email: {e}")
+        # No lanzar excepción, solo registrar el error
+        return False

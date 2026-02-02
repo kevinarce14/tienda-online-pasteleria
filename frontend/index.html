@@ -259,8 +259,18 @@
         // ========================================
         // CONFIGURACIÓN DE LA API
         // ========================================
-        const API_URL = "http://127.0.0.1:8000";
-        
+        const API_URL = (() => {
+            const hostname = window.location.hostname;
+    
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://127.0.0.1:8000';
+            }
+    
+            return ''; // En Vercel usa el mismo dominio
+        })();
+
+        console.log('🔌 API URL:', API_URL || window.location.origin);
+
         let cartItems = [];
 
         // ========================================

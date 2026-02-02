@@ -4,9 +4,25 @@
     {
       "src": "backend/src/main.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/(productos|ordenes|consultas).*",
+      "dest": "backend/src/main.py"
+    },
+    {
+      "src": "/",
+      "dest": "/frontend/index.html"
+    },
     {
       "src": "/(.*)",
       "dest": "backend/src/main.py"

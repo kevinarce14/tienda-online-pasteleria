@@ -1,13 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from pathlib import Path
 from datetime import datetime, date
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from mangum import Mangum
+import os
 
 from backend.src.database.db import get_db
 from backend.src.database.models.producto import Producto
@@ -47,26 +44,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -------------------------
-# CONFIGURAR ARCHIVOS ESTÁTICOS
-# -------------------------
-# Obtener la ruta al directorio frontend
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-FRONTEND_DIR = BASE_DIR / "frontend"
-
-# Montar archivos estáticos (si tienes CSS, JS, imágenes en frontend)
-app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
-
 
 # -------------------------
-# ROOT - SERVIR INDEX.HTML
+# ROOT - Redirigir a /static/index.html en Vercel
 # -------------------------
 
 @app.get("/")
 def root():
-    """Servir el archivo index.html"""
-    index_path = FRONTEND_DIR / "index.html"
-    return FileResponse(index_path)
+    """
+    En Vercel, el index.html se sirve directamente desde /
+    Este endpoint es solo para la API
+    """
+    return {
+        "mensaje": "API de Tienda Online Pastelería funcionando 🚀",
+        "endpoints": {
+            "productos": "/productos",
+            "ordenes": "/ordenes",
+            "consultas": "/consultas",
+            "docs": "/docs"
+        }
+    }
 
 
 # =========================
@@ -165,110 +162,6 @@ def agregar_item_a_orden(
     return nuevo_item
 
 
-# # =========================
-# # CONFIGURACIÓN DE EMAIL
-# # =========================
-
-# # ⚠️ CONFIGURAR CON TUS CREDENCIALES
-# EMAIL_CONFIG = {
-#     "smtp_server": "smtp.gmail.com",  # Para Gmail
-#     "smtp_port": 587,
-#     "sender_email": "kevinfeo2002@gmail.com",  # ⚠️ CAMBIAR
-#     "sender_password": "tnej orar wvya jcda",  # ⚠️ CAMBIAR
-#     "receiver_email": "kevindamian1702@gmail.com"  # ⚠️ Email de Nadines
-# }
-
-# def enviar_email_consulta(consulta: ConsultaCustom):
-#     """
-#     Envía un email con los detalles de la consulta personalizada
-#     """
-#     try:
-#         # Crear el mensaje
-#         mensaje = MIMEMultipart("alternative")
-#         mensaje["Subject"] = f"🎂 Nueva Consulta Personalizada - {consulta.nombre}"
-#         mensaje["From"] = EMAIL_CONFIG["sender_email"]
-#         mensaje["To"] = EMAIL_CONFIG["receiver_email"]
-
-#         # Crear el contenido HTML
-#         html = f"""
-#         <html>
-#             <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-#                 <div style="background-color: #ff7f50; padding: 20px; text-align: center;">
-#                     <h1 style="color: white; margin: 0;">🎂 Nueva Consulta Personalizada</h1>
-#                 </div>
-                
-#                 <div style="padding: 30px; background-color: #f9f9f9;">
-#                     <h2 style="color: #ff7f50;">Datos del Cliente</h2>
-#                     <table style="width: 100%; border-collapse: collapse;">
-#                         <tr>
-#                             <td style="padding: 10px; font-weight: bold; width: 40%;">Nombre:</td>
-#                             <td style="padding: 10px;">{consulta.nombre}</td>
-#                         </tr>
-#                         <tr style="background-color: white;">
-#                             <td style="padding: 10px; font-weight: bold;">Email:</td>
-#                             <td style="padding: 10px;">
-#                                 <a href="mailto:{consulta.email}">{consulta.email}</a>
-#                             </td>
-#                         </tr>
-#                         <tr>
-#                             <td style="padding: 10px; font-weight: bold;">Fecha del Evento:</td>
-#                             <td style="padding: 10px;">{consulta.fecha_evento.strftime('%d/%m/%Y')}</td>
-#                         </tr>
-#                         <tr style="background-color: white;">
-#                             <td style="padding: 10px; font-weight: bold;">Número de Invitados:</td>
-#                             <td style="padding: 10px;">{consulta.invitados or 'No especificado'}</td>
-#                         </tr>
-#                         <tr>
-#                             <td style="padding: 10px; font-weight: bold;">Estado:</td>
-#                             <td style="padding: 10px;">
-#                                 <span style="background-color: #ffd700; padding: 5px 10px; border-radius: 5px;">
-#                                     {consulta.estado}
-#                                 </span>
-#                             </td>
-#                         </tr>
-#                     </table>
-
-#                     <h2 style="color: #ff7f50; margin-top: 30px;">Detalles de la Consulta</h2>
-#                     <div style="background-color: white; padding: 20px; border-radius: 10px; border-left: 4px solid #ff7f50;">
-#                         <p style="white-space: pre-wrap; line-height: 1.6;">
-#                             {consulta.detalles or 'No se proporcionaron detalles adicionales.'}
-#                         </p>
-#                     </div>
-
-#                     <div style="margin-top: 30px; padding: 15px; background-color: #fff5f2; border-radius: 10px;">
-#                         <p style="margin: 0; color: #666;">
-#                             <strong>📋 ID de Consulta:</strong> {consulta.id}
-#                         </p>
-#                         <p style="margin: 5px 0 0 0; color: #666;">
-#                             <strong>📅 Fecha de Registro:</strong> {datetime.now().strftime('%d/%m/%Y %H:%M')}
-#                         </p>
-#                     </div>
-#                 </div>
-                
-#                 <div style="background-color: #4d2a20; padding: 20px; text-align: center; color: white;">
-#                     <p style="margin: 0;">Nadines Cakes - Sistema de Gestión de Consultas</p>
-#                 </div>
-#             </body>
-#         </html>
-#         """
-
-#         # Adjuntar el HTML
-#         parte_html = MIMEText(html, "html")
-#         mensaje.attach(parte_html)
-
-#         # Enviar el email
-#         with smtplib.SMTP(EMAIL_CONFIG["smtp_server"], EMAIL_CONFIG["smtp_port"]) as server:
-#             server.starttls()
-#             server.login(EMAIL_CONFIG["sender_email"], EMAIL_CONFIG["sender_password"])
-#             server.send_message(mensaje)
-        
-#         return True
-    
-#     except Exception as e:
-#         print(f"Error al enviar email: {e}")
-#         return False
-
-
 # =========================
 # CONSULTAS PERSONALIZADAS
 # =========================
@@ -299,8 +192,8 @@ def crear_consulta(
         raise HTTPException(status_code=400, detail="La fecha del evento no puede ser en el pasado")
     
     # Validar número de invitados si se proporciona
-    if consulta.invitados and (int(consulta.invitados) < 10 or int(consulta.invitados) > 10000):
-        raise HTTPException(status_code=400, detail="El número de invitados debe estar entre 10 y 10000")
+    if consulta.invitados and (int(consulta.invitados) < 1 or int(consulta.invitados) > 10000):
+        raise HTTPException(status_code=400, detail="El número de invitados debe estar entre 1 y 10000")
     
     # Crear la consulta
     nueva_consulta = ConsultaCustom(
@@ -316,14 +209,18 @@ def crear_consulta(
     db.commit()
     db.refresh(nueva_consulta)
     
-        # Enviar email al negocio
-    enviar_email_consulta(
-        nombre=consulta.nombre,
-        email_cliente=consulta.email,
-        fecha_evento=str(consulta.fecha_evento),
-        invitados=consulta.invitados,
-        detalles=consulta.detalles
-    )
+    # Enviar email de notificación (solo si está configurado)
+    try:
+        enviar_email_consulta(
+            nombre=consulta.nombre,
+            email_cliente=consulta.email,
+            fecha_evento=str(consulta.fecha_evento),
+            invitados=consulta.invitados,
+            detalles=consulta.detalles
+        )
+    except Exception as e:
+        print(f"⚠️ No se pudo enviar email: {e}")
+        # No lanzamos error, la consulta ya está guardada
     
     return nueva_consulta
 
@@ -364,3 +261,9 @@ def actualizar_estado_consulta(
     db.refresh(consulta)
     
     return {"mensaje": f"Estado actualizado a '{estado}'", "consulta": consulta}
+
+
+# =========================
+# HANDLER PARA VERCEL
+# =========================
+handler = Mangum(app)
