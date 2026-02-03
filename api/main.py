@@ -1,8 +1,11 @@
 # api/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime, date
+from pathlib import Path
 import sys
 import os
 import logging
@@ -102,22 +105,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -------------------------
+# CONFIGURAR ARCHIVOS ESTÁTICOS
+# -------------------------
+# Obtener la ruta al directorio frontend
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
+# Montar archivos estáticos (si tienes CSS, JS, imágenes en frontend)
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 # -------------------------
 # ROOT
 # -------------------------
 
 @app.get("/")
 def root():
-    return {
-        "mensaje": "API de Tienda Online Pastelería funcionando 🚀",
-        "endpoints": {
-            "productos": "/productos",
-            "ordenes": "/ordenes",
-            "consultas": "/consultas",
-            "docs": "/docs"
-        }
-    }
+    """Servir el archivo index.html"""
+    index_path = FRONTEND_DIR / "index.html"
+    return FileResponse(index_path)
 
 
 # =========================
