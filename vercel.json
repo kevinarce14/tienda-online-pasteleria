@@ -20,7 +20,7 @@
       "dest": "/api/main.py"
     },
     {
-      "src": "/productos.*",
+      "src": "/productos",
       "dest": "/api/main.py"
     },
     {
@@ -29,10 +29,6 @@
     },
     {
       "src": "/consultas.*",
-      "dest": "/api/main.py"
-    },
-    {
-      "src": "/health",
       "dest": "/api/main.py"
     },
     {
