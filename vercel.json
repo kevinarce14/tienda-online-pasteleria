@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
+      "src": "api/main.py",
       "use": "@vercel/python"
     },
     {
@@ -12,8 +12,35 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/api/main.py"
+    },
+    {
+      "src": "/docs",
+      "dest": "/api/main.py"
+    },
+    {
+      "src": "/productos",
+      "dest": "/api/main.py"
+    },
+    {
+      "src": "/ordenes.*",
+      "dest": "/api/main.py"
+    },
+    {
+      "src": "/consultas.*",
+      "dest": "/api/main.py"
+    },
+    {
+      "src": "/",
+      "dest": "/frontend/index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    },
+    {
       "src": "/(.*)",
-      "dest": "/api/__init__.py"
+      "dest": "/frontend/$1"
     }
   ]
 }
