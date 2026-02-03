@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/src/main.py",
+      "src": "api/main.py",
       "use": "@vercel/python"
     },
     {
@@ -12,20 +12,14 @@
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/frontend/$1"
-    },
-    {
-      "src": "/(productos|ordenes|consultas).*",
-      "dest": "backend/src/main.py"
-    },
-    {
-      "src": "/",
-      "dest": "/frontend/index.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "backend/src/main.py"
+      "dest": "/api/main.py"
     }
-  ]
+  ],
+  "functions": {
+    "api/main.py": {
+      "runtime": "python3.11",
+      "maxDuration": 30
+    }
+  }
 }
