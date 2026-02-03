@@ -1,10 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, date
 from mangum import Mangum
-import os
 
 from backend.src.database.db import get_db
 from backend.src.database.models.producto import Producto
@@ -38,7 +36,7 @@ app = FastAPI(title="API Tienda Online Pastelería 🎂")
 # -------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, especifica los dominios permitidos
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,15 +44,11 @@ app.add_middleware(
 
 
 # -------------------------
-# ROOT - Redirigir a /static/index.html en Vercel
+# ROOT
 # -------------------------
 
 @app.get("/")
 def root():
-    """
-    En Vercel, el index.html se sirve directamente desde /
-    Este endpoint es solo para la API
-    """
     return {
         "mensaje": "API de Tienda Online Pastelería funcionando 🚀",
         "endpoints": {
@@ -104,16 +98,15 @@ def crear_orden(
     nueva = Orden(
         nombre_cliente=orden.nombre_cliente,
         email_cliente=orden.email_cliente,
-        total=0,  # ✅ Iniciar en 0, se actualizará al agregar items
+        total=0,
         estado="pendiente",
-        codigo_orden="TEMP"  # placeholder
+        codigo_orden="TEMP"
     )
 
     db.add(nueva)
     db.commit()
     db.refresh(nueva)
 
-    # generar código real
     nueva.codigo_orden = generar_codigo_orden(nueva.id)
     db.commit()
     db.refresh(nueva)
@@ -153,7 +146,7 @@ def agregar_item_a_orden(
         subtotal=subtotal
     )
 
-    orden.total += subtotal  # 🔥 Se suma correctamente aquí
+    orden.total += subtotal
 
     db.add(nuevo_item)
     db.commit()
@@ -220,7 +213,6 @@ def crear_consulta(
         )
     except Exception as e:
         print(f"⚠️ No se pudo enviar email: {e}")
-        # No lanzamos error, la consulta ya está guardada
     
     return nueva_consulta
 
@@ -264,6 +256,8 @@ def actualizar_estado_consulta(
 
 
 # =========================
-# HANDLER PARA VERCEL
+# HANDLER PARA VERCEL - CRÍTICO
 # =========================
-handler = Mangum(app)
+# IMPORTANTE: Esto debe estar al final del archivo
+# NO modificar esta línea
+handler = Mangum(app, lifespan="off")
