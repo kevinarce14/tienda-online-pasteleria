@@ -259,17 +259,27 @@
         // ========================================
         // CONFIGURACIÓN DE LA API
         // ========================================
+        
         const API_URL = (() => {
             const hostname = window.location.hostname;
+            const port = window.location.port;
     
+            // Si estamos en localhost (desarrollo)
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
-                return 'http://127.0.0.1:8000';
+                // Si FastAPI está sirviendo el frontend, usa rutas relativas
+                if (port === '8000') { // Puerto de FastAPI
+                    return ''; // Rutas relativas al mismo servidor
+                } else {
+                    // Si estás abriendo index.html directamente
+                    return 'http://localhost:8000';
+                }
             }
     
-            return ''; // En Vercel usa el mismo dominio
+            // En Vercel (producción), usa /api como configuraste en vercel.json
+            return '/api';
         })();
 
-        console.log('🔌 API URL:', API_URL || window.location.origin);
+        console.log('🔌 API URL:', API_URL || 'Mismo servidor');
 
         let cartItems = [];
 

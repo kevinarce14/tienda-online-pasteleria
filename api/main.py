@@ -1,29 +1,28 @@
-# api/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, date
 import sys
 import os
 import logging
 
-# Configurar logging para ver errores
+# Configurar logging
 logging.basicConfig(level=logging.INFO)
 
 # ============================================
-# FIX CRÍTICO PARA VERCEL: Ajustar path
+# DETECTAR ENTORNO (LOCAL vs VERCEL)
 # ============================================
-# Agrega el directorio raíz del proyecto al path
+IS_VERCEL = "VERCEL" in os.environ or "NOW_REGION" in os.environ
+print(f"⚠️ Entorno: {'VERCEL' if IS_VERCEL else 'LOCAL'}")
+
+# Ajustar path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.join(current_dir, '..')
 sys.path.insert(0, project_root)
 
-print(f"Current directory: {current_dir}")
-print(f"Project root: {project_root}")
-print(f"Python path: {sys.path}")
-
 try:
-    # Intenta importar desde la nueva ubicación
     from backend.src.database.db import get_db
     from backend.src.database.models.producto import Producto
     from backend.src.database.models.orden import Orden
@@ -52,44 +51,9 @@ try:
     
 except ImportError as e:
     print(f"❌ Error importando módulos: {e}")
-    print(f"Intentando importar desde ubicaciones alternativas...")
-    
-    # Fallback: intenta importar directamente
-    try:
-        # Agrega backend/src al path
-        backend_src_path = os.path.join(project_root, 'backend', 'src')
-        sys.path.insert(0, backend_src_path)
-        
-        from backend.src.database.db import get_db
-        from backend.src.database.models.producto import Producto
-        from backend.src.database.models.orden import Orden
-        from backend.src.database.models.consulta_custom import ConsultaCustom
-        from backend.src.database.models.orden_item import OrdenItem
-        
-        from backend.src.database.schemas.producto import (
-            ProductoCreate,
-            ProductoResponse
-        )
-        from backend.src.database.schemas.orden import (
-            OrdenCreate,
-            OrdenResponse
-        )
-        from backend.src.database.schemas.orden_item import (
-            OrdenItemCreate,
-            OrdenItemResponse
-        )
-        from backend.src.database.schemas.consulta_custom import (
-            ConsultaCustomCreate,
-            ConsultaCustomResponse
-        )
-        from backend.src.utils.email import enviar_email_consulta
-        
-        print("✅ Imports funcionaron con path alternativo")
-    except ImportError as e2:
-        print(f"❌ Error crítico en imports: {e2}")
-        # Define funciones dummy para que la app al menos cargue
-        get_db = None
-        enviar_email_consulta = lambda *args, **kwargs: None
+    # Funciones dummy para desarrollo
+    get_db = None
+    enviar_email_consulta = lambda *args, **kwargs: None
 
 app = FastAPI(title="API Tienda Online Pastelería 🎂")
 
@@ -102,22 +66,64 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# -------------------------
-# ROOT
-# -------------------------
-
-@app.get("/")
-def root():
-    return {
-        "mensaje": "API de Tienda Online Pastelería funcionando 🚀",
-        "endpoints": {
-            "productos": "/productos",
-            "ordenes": "/ordenes",
-            "consultas": "/consultas",
-            "docs": "/docs"
+# ============================================
+# SERVIR FRONTEND EN LOCAL
+# ============================================
+if not IS_VERCEL:
+    # En local, servir el frontend estático
+    frontend_path = os.path.join(project_root, "frontend")
+    print(f"🔍 Buscando frontend en: {frontend_path}")
+    
+    if os.path.exists(frontend_path):
+        print(f"✅ Frontend encontrado en: {frontend_path}")
+        
+        # Montar archivos estáticos
+        app.mount("/static", StaticFiles(directory=frontend_path), name="static")
+        
+        @app.get("/")
+        async def serve_frontend_local():
+            """Servir el index.html del frontend en local"""
+            index_path = os.path.join(frontend_path, "index.html")
+            if os.path.exists(index_path):
+                print(f"✅ Sirviendo index.html desde: {index_path}")
+                return FileResponse(index_path)
+            else:
+                print(f"❌ index.html no encontrado en: {index_path}")
+                return {
+                    "mensaje": "Frontend no encontrado en local",
+                    "instrucciones": "Asegúrate de tener index.html en la carpeta frontend/"
+                }
+    else:
+        print(f"❌ Carpeta frontend no encontrada: {frontend_path}")
+        
+        @app.get("/")
+        def root_local():
+            return {
+                "mensaje": "API funcionando en local 🚀",
+                "nota": "Frontend no encontrado. Ejecuta el frontend por separado o coloca los archivos en /frontend",
+                "endpoints_api": {
+                    "productos": "/productos",
+                    "ordenes": "/ordenes", 
+                    "consultas": "/consultas",
+                    "docs": "/docs"
+                },
+                "frontend_local": "http://localhost:8000" if IS_VERCEL else "Abre index.html directamente en el navegador"
+            }
+else:
+    # En Vercel, solo mostrar la API (el frontend lo sirve Vercel por separado)
+    @app.get("/")
+    def root_vercel():
+        return {
+            "mensaje": "API de Tienda Online Pastelería funcionando en Vercel 🚀",
+            "endpoints": {
+                "productos": "/productos",
+                "ordenes": "/ordenes",
+                "consultas": "/consultas", 
+                "docs": "/docs"
+            },
+            "frontend": "Visita la URL principal para ver el frontend"
         }
-    }
+
 
 
 # =========================
@@ -332,11 +338,19 @@ def debug_info():
     }
 
 # =========================
-# HANDLER PARA VERCEL - SIN MANGUM
+# ENDPOINT DE SALUD PARA VERIFICAR
 # =========================
-# Vercel detecta FastAPI automáticamente, no necesitas Mangum
-# Comenta o elimina esta línea:
-# handler = Mangum(app, lifespan="off")
 
-# En su lugar, exporta la app directamente
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "environment": "vercel" if IS_VERCEL else "local",
+        "service": "pasteleria-api",
+        "timestamp": datetime.now().isoformat()
+    }
+
+# =========================
+# PARA VERCEL
+# =========================
 app = app
