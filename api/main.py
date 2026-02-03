@@ -1,46 +1,99 @@
+# api/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime, date
-from mangum import Mangum
-
-from backend.src.database.db import get_db
-from backend.src.database.models.producto import Producto
-from backend.src.database.models.orden import Orden
-from backend.src.database.models.consulta_custom import ConsultaCustom
-
-from backend.src.database.schemas.producto import (
-    ProductoCreate,
-    ProductoResponse
-)
-from backend.src.database.schemas.orden import (
-    OrdenCreate,
-    OrdenResponse
-)
-from backend.src.database.models.orden_item import OrdenItem
-from backend.src.database.schemas.orden_item import (
-    OrdenItemCreate,
-    OrdenItemResponse
-)
-from backend.src.database.schemas.consulta_custom import (
-    ConsultaCustomCreate,
-    ConsultaCustomResponse
-)
-from backend.src.utils.email import enviar_email_consulta
-
-# Agrega esto al inicio de main.py
 import sys
+import os
 import logging
 
 # Configurar logging para ver errores
 logging.basicConfig(level=logging.INFO)
 
+# ============================================
+# FIX CRÍTICO PARA VERCEL: Ajustar path
+# ============================================
+# Agrega el directorio raíz del proyecto al path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.join(current_dir, '..')
+sys.path.insert(0, project_root)
+
+print(f"Current directory: {current_dir}")
+print(f"Project root: {project_root}")
+print(f"Python path: {sys.path}")
+
+try:
+    # Intenta importar desde la nueva ubicación
+    from backend.src.database.db import get_db
+    from backend.src.database.models.producto import Producto
+    from backend.src.database.models.orden import Orden
+    from backend.src.database.models.consulta_custom import ConsultaCustom
+    from backend.src.database.models.orden_item import OrdenItem
+    
+    from backend.src.database.schemas.producto import (
+        ProductoCreate,
+        ProductoResponse
+    )
+    from backend.src.database.schemas.orden import (
+        OrdenCreate,
+        OrdenResponse
+    )
+    from backend.src.database.schemas.orden_item import (
+        OrdenItemCreate,
+        OrdenItemResponse
+    )
+    from backend.src.database.schemas.consulta_custom import (
+        ConsultaCustomCreate,
+        ConsultaCustomResponse
+    )
+    from backend.src.utils.email import enviar_email_consulta
+    
+    print("✅ Todos los imports funcionaron correctamente")
+    
+except ImportError as e:
+    print(f"❌ Error importando módulos: {e}")
+    print(f"Intentando importar desde ubicaciones alternativas...")
+    
+    # Fallback: intenta importar directamente
+    try:
+        # Agrega backend/src al path
+        backend_src_path = os.path.join(project_root, 'backend', 'src')
+        sys.path.insert(0, backend_src_path)
+        
+        from backend.src.database.db import get_db
+        from backend.src.database.models.producto import Producto
+        from backend.src.database.models.orden import Orden
+        from backend.src.database.models.consulta_custom import ConsultaCustom
+        from backend.src.database.models.orden_item import OrdenItem
+        
+        from backend.src.database.schemas.producto import (
+            ProductoCreate,
+            ProductoResponse
+        )
+        from backend.src.database.schemas.orden import (
+            OrdenCreate,
+            OrdenResponse
+        )
+        from backend.src.database.schemas.orden_item import (
+            OrdenItemCreate,
+            OrdenItemResponse
+        )
+        from backend.src.database.schemas.consulta_custom import (
+            ConsultaCustomCreate,
+            ConsultaCustomResponse
+        )
+        from backend.src.utils.email import enviar_email_consulta
+        
+        print("✅ Imports funcionaron con path alternativo")
+    except ImportError as e2:
+        print(f"❌ Error crítico en imports: {e2}")
+        # Define funciones dummy para que la app al menos cargue
+        get_db = None
+        enviar_email_consulta = lambda *args, **kwargs: None
 
 app = FastAPI(title="API Tienda Online Pastelería 🎂")
 
-# -------------------------
-# CORS - IMPORTANTE PARA CONECTAR CON FRONTEND
-# -------------------------
+# Configuración CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -263,8 +316,27 @@ def actualizar_estado_consulta(
 
 
 # =========================
-# HANDLER PARA VERCEL - CRÍTICO
+# IMPORTANTE: PRUEBA SIMPLE
 # =========================
-# IMPORTANTE: Esto debe estar al final del archivo
-# NO modificar esta línea
-handler = Mangum(app, lifespan="off")
+@app.get("/test")
+def test_endpoint():
+    return {"message": "✅ API funcionando en Vercel", "status": "ok"}
+
+@app.get("/debug")
+def debug_info():
+    return {
+        "python_path": sys.path,
+        "current_dir": current_dir,
+        "project_root": project_root,
+        "files_in_root": os.listdir(project_root) if os.path.exists(project_root) else []
+    }
+
+# =========================
+# HANDLER PARA VERCEL - SIN MANGUM
+# =========================
+# Vercel detecta FastAPI automáticamente, no necesitas Mangum
+# Comenta o elimina esta línea:
+# handler = Mangum(app, lifespan="off")
+
+# En su lugar, exporta la app directamente
+app = app
