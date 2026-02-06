@@ -1,29 +1,36 @@
 # api/main.py
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime, date
+from pathlib import Path
 import sys
 import os
 import logging
 
-# Configurar logging para ver errores
+# Configurar logging
 logging.basicConfig(level=logging.INFO)
 
 # ============================================
-# FIX CRÍTICO PARA VERCEL: Ajustar path
+# PATH SETUP
 # ============================================
-# Agrega el directorio raíz del proyecto al path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.join(current_dir, '..')
 sys.path.insert(0, project_root)
 
-print(f"Current directory: {current_dir}")
-print(f"Project root: {project_root}")
-print(f"Python path: {sys.path}")
+# Detectar si estamos en Vercel o en local
+IS_VERCEL = os.getenv("VERCEL") == "1"
 
+print(f"🔧 Entorno: {'Vercel' if IS_VERCEL else 'Local'}")
+print(f"📁 Current directory: {current_dir}")
+print(f"📁 Project root: {project_root}")
+
+# ============================================
+# IMPORTS
+# ============================================
 try:
-    # Intenta importar desde la nueva ubicación
     from backend.src.database.db import get_db
     from backend.src.database.models.producto import Producto
     from backend.src.database.models.orden import Orden
@@ -48,52 +55,21 @@ try:
     )
     from backend.src.utils.email import enviar_email_consulta
     
-    print("✅ Todos los imports funcionaron correctamente")
+    print("✅ Todos los imports exitosos")
     
 except ImportError as e:
-    print(f"❌ Error importando módulos: {e}")
-    print(f"Intentando importar desde ubicaciones alternativas...")
-    
-    # Fallback: intenta importar directamente
-    try:
-        # Agrega backend/src al path
-        backend_src_path = os.path.join(project_root, 'backend', 'src')
-        sys.path.insert(0, backend_src_path)
-        
-        from backend.src.database.db import get_db
-        from backend.src.database.models.producto import Producto
-        from backend.src.database.models.orden import Orden
-        from backend.src.database.models.consulta_custom import ConsultaCustom
-        from backend.src.database.models.orden_item import OrdenItem
-        
-        from backend.src.database.schemas.producto import (
-            ProductoCreate,
-            ProductoResponse
-        )
-        from backend.src.database.schemas.orden import (
-            OrdenCreate,
-            OrdenResponse
-        )
-        from backend.src.database.schemas.orden_item import (
-            OrdenItemCreate,
-            OrdenItemResponse
-        )
-        from backend.src.database.schemas.consulta_custom import (
-            ConsultaCustomCreate,
-            ConsultaCustomResponse
-        )
-        from backend.src.utils.email import enviar_email_consulta
-        
-        print("✅ Imports funcionaron con path alternativo")
-    except ImportError as e2:
-        print(f"❌ Error crítico en imports: {e2}")
-        # Define funciones dummy para que la app al menos cargue
-        get_db = None
-        enviar_email_consulta = lambda *args, **kwargs: None
+    print(f"❌ Error en imports: {e}")
+    import traceback
+    traceback.print_exc()
+    get_db = None
+    enviar_email_consulta = lambda *args, **kwargs: None
 
+# ============================================
+# CREAR APP
+# ============================================
 app = FastAPI(title="API Tienda Online Pastelería 🎂")
 
-# Configuración CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -102,22 +78,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# -------------------------
-# ROOT
-# -------------------------
-
-@app.get("/")
-def root():
-    return {
-        "mensaje": "API de Tienda Online Pastelería funcionando 🚀",
-        "endpoints": {
-            "productos": "/productos",
-            "ordenes": "/ordenes",
-            "consultas": "/consultas",
-            "docs": "/docs"
-        }
-    }
+# ============================================
+# SERVIR FRONTEND (SOLO EN LOCAL)
+# ============================================
+if not IS_VERCEL:
+    # En local, servir archivos estáticos
+    frontend_path = Path(project_root) / "frontend"
+    
+    if frontend_path.exists():
+        print(f"✅ Frontend encontrado en: {frontend_path}")
+        
+        # Montar archivos estáticos
+        app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
+        
+        # Servir index.html en la raíz
+        @app.get("/", include_in_schema=False)
+        async def serve_frontend():
+            index_path = frontend_path / "index.html"
+            if index_path.exists():
+                return FileResponse(index_path)
+            else:
+                return {"error": "index.html no encontrado"}
+    else:
+        print(f"⚠️ Frontend no encontrado en: {frontend_path}")
+        
+        @app.get("/", include_in_schema=False)
+        async def root_local():
+            return {
+                "mensaje": "⚠️ Frontend no encontrado",
+                "frontend_path": str(frontend_path),
+                "ayuda": "Verifica que exista la carpeta frontend/ con index.html"
+            }
 
 
 # =========================
@@ -173,6 +164,7 @@ def crear_orden(
 
     return nueva
 
+
 def generar_codigo_orden(id_orden: int) -> str:
     anio = datetime.now().year
     return f"ORD-{anio}-{str(id_orden).zfill(6)}"
@@ -182,10 +174,7 @@ def generar_codigo_orden(id_orden: int) -> str:
 # ORDEN_ITEMS
 # =========================
 
-@app.post(
-    "/ordenes/{orden_id}/items",
-    response_model=OrdenItemResponse
-)
+@app.post("/ordenes/{orden_id}/items", response_model=OrdenItemResponse)
 def agregar_item_a_orden(
     orden_id: int,
     item: OrdenItemCreate,
@@ -221,7 +210,6 @@ def agregar_item_a_orden(
 
 @app.get("/consultas", response_model=list[ConsultaCustomResponse])
 def listar_consultas(db: Session = Depends(get_db)):
-    """Listar todas las consultas personalizadas"""
     return db.query(ConsultaCustom).all()
 
 
@@ -230,9 +218,6 @@ def crear_consulta(
     consulta: ConsultaCustomCreate,
     db: Session = Depends(get_db)
 ):
-    """
-    Crear una nueva consulta personalizada y enviar email de notificación
-    """
     # Validaciones
     if not consulta.nombre or len(consulta.nombre.strip()) < 2:
         raise HTTPException(status_code=400, detail="El nombre debe tener al menos 2 caracteres")
@@ -240,11 +225,9 @@ def crear_consulta(
     if not consulta.email or "@" not in consulta.email:
         raise HTTPException(status_code=400, detail="Email inválido")
     
-    # Validar que la fecha no sea en el pasado
     if consulta.fecha_evento < date.today():
         raise HTTPException(status_code=400, detail="La fecha del evento no puede ser en el pasado")
     
-    # Validar número de invitados si se proporciona
     if consulta.invitados and (int(consulta.invitados) < 1 or int(consulta.invitados) > 10000):
         raise HTTPException(status_code=400, detail="El número de invitados debe estar entre 1 y 10000")
     
@@ -262,7 +245,7 @@ def crear_consulta(
     db.commit()
     db.refresh(nueva_consulta)
     
-    # Enviar email de notificación (solo si está configurado)
+    # Enviar email
     try:
         enviar_email_consulta(
             nombre=consulta.nombre,
@@ -278,11 +261,7 @@ def crear_consulta(
 
 
 @app.get("/consultas/{consulta_id}", response_model=ConsultaCustomResponse)
-def obtener_consulta(
-    consulta_id: int,
-    db: Session = Depends(get_db)
-):
-    """Obtener una consulta específica por ID"""
+def obtener_consulta(consulta_id: int, db: Session = Depends(get_db)):
     consulta = db.query(ConsultaCustom).filter(ConsultaCustom.id == consulta_id).first()
     if not consulta:
         raise HTTPException(status_code=404, detail="Consulta no encontrada")
@@ -290,12 +269,7 @@ def obtener_consulta(
 
 
 @app.put("/consultas/{consulta_id}/estado")
-def actualizar_estado_consulta(
-    consulta_id: int,
-    estado: str,
-    db: Session = Depends(get_db)
-):
-    """Actualizar el estado de una consulta (pendiente, en_proceso, completada)"""
+def actualizar_estado_consulta(consulta_id: int, estado: str, db: Session = Depends(get_db)):
     estados_validos = ["pendiente", "en_proceso", "completada", "cancelada"]
     
     if estado not in estados_validos:
@@ -316,27 +290,31 @@ def actualizar_estado_consulta(
 
 
 # =========================
-# IMPORTANTE: PRUEBA SIMPLE
+# ENDPOINTS DE DEBUG
 # =========================
+
 @app.get("/test")
 def test_endpoint():
-    return {"message": "✅ API funcionando en Vercel", "status": "ok"}
+    return {
+        "message": "✅ API funcionando",
+        "status": "ok",
+        "entorno": "Vercel" if IS_VERCEL else "Local"
+    }
+
 
 @app.get("/debug")
 def debug_info():
     return {
-        "python_path": sys.path,
+        "entorno": "Vercel" if IS_VERCEL else "Local",
+        "python_path": sys.path[:3],
         "current_dir": current_dir,
         "project_root": project_root,
-        "files_in_root": os.listdir(project_root) if os.path.exists(project_root) else []
+        "frontend_exists": os.path.exists(os.path.join(project_root, "frontend"))
     }
 
-# =========================
-# HANDLER PARA VERCEL - SIN MANGUM
-# =========================
-# Vercel detecta FastAPI automáticamente, no necesitas Mangum
-# Comenta o elimina esta línea:
-# handler = Mangum(app, lifespan="off")
 
-# En su lugar, exporta la app directamente
-app = app
+# ============================================
+# FIN - Vercel detecta 'app' automáticamente
+# ============================================
+# NO se necesita Mangum handler
+# Vercel busca la variable 'app' y la ejecuta directamente
