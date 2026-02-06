@@ -1,6 +1,9 @@
 import os
 import smtplib
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def enviar_email_consulta(
@@ -16,10 +19,10 @@ def enviar_email_consulta(
     """
     
     # Obtener configuración de variables de entorno
-    EMAIL_SENDER = os.getenv("EMAIL_SENDER", "kevinfeo2002@gmail.com")
-    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "tnej orar wvya jcda")
-    EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER", "kevindamian1702@gmail.com")
-    SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+    EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
+    SMTP_SERVER = os.getenv("SMTP_SERVER")
     SMTP_PORT = int(os.getenv("SMTP_PORT", "465"))
     
     msg = EmailMessage()
