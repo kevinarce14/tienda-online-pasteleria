@@ -7,7 +7,8 @@ from backend.src.database.db import Base
 
 class Cliente(Base):
     __tablename__ = "clientes"
-
+    __table_args__ = {"schema": "pasteleria"}
+    
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(150), nullable=False)
     email = Column(String(255), unique=True, nullable=False, index=True)

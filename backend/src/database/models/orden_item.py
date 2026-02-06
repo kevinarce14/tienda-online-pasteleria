@@ -4,6 +4,7 @@ from backend.src.database.db import Base
 
 class OrdenItem(Base):
     __tablename__ = "orden_items"
+    __table_args__ = {"schema": "pasteleria"}
 
     id = Column(Integer, primary_key=True, index=True)
 

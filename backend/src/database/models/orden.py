@@ -4,6 +4,7 @@ from backend.src.database.db import Base
 
 class Orden(Base):
     __tablename__ = "ordenes"
+    __table_args__ = {"schema": "pasteleria"}
 
     id = Column(Integer, primary_key=True, index=True)
     nombre_cliente = Column(String(150))
